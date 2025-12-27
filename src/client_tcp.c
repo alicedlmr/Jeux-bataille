@@ -1,8 +1,4 @@
-/*
- * client_tcp.c
- * Client simplifié pour Bataille Automatique
- */
-
+/* src/client_tcp.c */
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -38,7 +34,7 @@ int main(int argc, char *argv[]) {
     if (connect(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) 
         error("ERROR connecting");
 
-    printf("[CLIENT] Connecte. Le jeu va commencer...\n");
+    printf("[CLIENT] Connecte au serveur de jeu.\n");
 
     while(1) {
         bzero((char *) &paquet, sizeof(paquet));
@@ -46,64 +42,54 @@ int main(int argc, char *argv[]) {
         if (n <= 0) break;
 
         switch(paquet.type) {
-
-            case TYPE_VOTE:
-                printf("\n#################################\n");
-                printf("###   SELECTION DU THEME      ###\n");
-                printf("#################################\n");
-                printf("%s\n", paquet.texteInfo);
-                
-                int choixTheme;
-                do {
-                    printf("Votre vote (1 ou 2) : ");
-                    scanf("%d", &choixTheme);
-                    while(getchar() != '\n'); // Vidage buffer
-                } while (choixTheme < 1 || choixTheme > 2);
-
-                // Réponse
-                bzero((char *) &paquet, sizeof(paquet));
-                paquet.type = TYPE_CHOIX; // On utilise le type réponse standard
-                paquet.choixCritere = choixTheme;
-                write(sockfd, &paquet, sizeof(paquet));
-                
-                printf("Vote envoye. Attente du resultat...\n");
-                break;
             
             case TYPE_TON_TOUR:
-                printf("\n--- C'EST A VOUS ! ---\n");
-                printf("Votre carte : %s\n", paquet.carteInfo.nom);
-                printf("1. Vitesse   : %d\n", paquet.carteInfo.critere1);
-                printf("2. Puissance : %d\n", paquet.carteInfo.critere2);
-                printf("----------------------\n");
+                printf("\n##################################\n");
+                printf("###      C'EST A VOUS !        ###\n");
+                printf("##################################\n");
+                printf("MA CARTE : %s\n", paquet.carteInfo.nom);
+                printf("----------------------------------\n");
+                printf("[1] Vitesse Max   : %d km/h\n", paquet.carteInfo.critere1);
+                printf("[2] Puissance     : %d ch\n", paquet.carteInfo.critere2);
+                printf("[3] Cylindree     : %d cm3\n", paquet.carteInfo.critere3);
+                printf("[4] Regime Moteur : %d tr/min\n", paquet.carteInfo.critere4);
+                printf("----------------------------------\n");
                 printf("%s\n", paquet.texteInfo);
                 
                 int choixCrit;
                 do {
-                    printf("Choisissez votre atout (1 ou 2) : ");
-                    scanf("%d", &choixCrit);
-                    // Vidage buffer clavier au cas où
-                    while(getchar() != '\n'); 
-                } while(choixCrit < 1 || choixCrit > 2);
+                    printf("Votre choix (1-4) : ");
+                    if(scanf("%d", &choixCrit) != 1) while(getchar() != '\n'); 
+                } while(choixCrit < 1 || choixCrit > 4);
 
-                // Réponse
+                // Envoi de la réponse
                 bzero((char *) &paquet, sizeof(paquet));
                 paquet.type = TYPE_CHOIX;
                 paquet.choixCritere = choixCrit;
                 write(sockfd, &paquet, sizeof(paquet));
-                printf("Atout envoye...\n");
+                printf("... Choix envoye ...\n");
                 break;
 
             case TYPE_ADVERSAIRE:
-                printf("\n[ATTENTE] %s\n", paquet.texteInfo);
+                printf("\n----------------------------------\n");
+                printf("   EN ATTENTE DE L'ADVERSAIRE...  \n");
+                printf("----------------------------------\n");
+                printf("MA CARTE : %s\n", paquet.carteInfo.nom);
+                printf(" [1] Vitesse   : %d km/h\n", paquet.carteInfo.critere1);
+                printf(" [2] Puissance : %d ch\n", paquet.carteInfo.critere2);
+                printf(" [3] Cylindree : %d cm3\n", paquet.carteInfo.critere3);
+                printf(" [4] Regime    : %d tr/min\n", paquet.carteInfo.critere4);
+                printf("----------------------------------\n");
+                printf("INFO : %s\n", paquet.texteInfo);
                 break;
 
             case TYPE_RESULTAT:
-                printf("\n>>> RESULTAT DU TOUR : %s <<<\n", paquet.texteInfo);
+                printf("\n>>> RESULTAT MANCHE : %s <<<\n", paquet.texteInfo);
                 break;
 
             case TYPE_FIN:
                 printf("\n=============================\n");
-                printf("FIN : %s\n", paquet.texteInfo);
+                printf("FIN DE PARTIE : %s\n", paquet.texteInfo);
                 printf("=============================\n");
                 close(sockfd);
                 return 0;

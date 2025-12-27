@@ -1,8 +1,4 @@
-/* * jeux.h
- * Ce fichier contient les structures partagées par le client et le serveur pour le jeux.
- * On l'inclu dans les fichiers: server.c et client.c.
- */
-
+/* base/jeux.h */
 #ifndef JEUX_H
 #define JEUX_H
 
@@ -11,37 +7,36 @@
 #include <string.h>
 
 // --- CONSTANTES ---
-#define PORT 8080           // Port de connexion par défaut
-#define BUFFER_SIZE 1024    // Taille standard des tampons
-#define MAX_NAME 50         // Taille max pour le nom d'une carte
+#define PORT 8080
+#define BUFFER_SIZE 1024
+#define MAX_NAME 50
 #define TEXT_SIZE 512
 
-// --- CODES DES MESSAGES (Protocol) ---
-#define TYPE_VOTE 'V' // V = Vote pour le thème
-#define TYPE_ATTENTE    'A'  // A = Attente d'un adversaire
-#define TYPE_TON_TOUR   'T'  // T = Ton Tour de jouer
-#define TYPE_ADVERSAIRE 'W'  // W = Wait (l'adversaire joue)
-#define TYPE_CHOIX      'C'  // C = Choix du critère envoyé par le joueur
-#define TYPE_RESULTAT   'R'  // R = Résultat de la manche
-#define TYPE_FIN        'F'  // F = Fin de la partie
-#define TYPE_REDIRECT       'D'  // D = Déviation
-#define TYPE_SELECTION_CARTE 'S' // S = Selection
+// --- CODES PROTOCOLE ---
+#define TYPE_VOTE       'V'
+#define TYPE_ATTENTE    'A'
+#define TYPE_TON_TOUR   'T'
+#define TYPE_ADVERSAIRE 'W'
+#define TYPE_CHOIX      'C'
+#define TYPE_RESULTAT   'R'
+#define TYPE_FIN        'F'
+#define TYPE_REDIRECT   'D'
 
-// --- STRUCTURE CARTE (TOP TRUMPS) ---
+// --- STRUCTURE CARTE (4 CRITÈRES) ---
 typedef struct {
-    char nom[MAX_NAME]; // Nom de la carte
-    int critere1;        // Critère 1
-    int critere2;      // Critère 2
-    int critere3;          // Critère 3
-    int critere4;   // Critère 4
+    char nom[MAX_NAME];
+    int critere1; // Vitesse Max (km/h)
+    int critere2; // Puissance (ch)
+    int critere3; // Cylindrée (cm3)
+    int critere4; // Régime Max (tr/min)
 } Carte;
 
-// --- STRUCTURE DU PAQUET RESEAU ---
+// --- STRUCTURE PAQUET ---
 typedef struct __attribute__((packed)) {
-    char type;              // Le code message ('A', 'T', 'C'...)
-    Carte carteInfo;        // Les infos de la carte (si nécessaire)
-    int choixCritere;       // L'indice du critère choisi (1-4)
-    char texteInfo[TEXT_SIZE];    // Message texte pour l'affichage
+    char type;
+    Carte carteInfo;
+    int choixCritere;
+    char texteInfo[TEXT_SIZE];
 } GamePacket;
 
 #endif
