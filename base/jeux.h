@@ -24,6 +24,7 @@
 #define TYPE_CHOIX      'C'  // C = Choix du critère envoyé par le joueur
 #define TYPE_RESULTAT   'R'  // R = Résultat de la manche
 #define TYPE_FIN        'F'  // F = Fin de la partie
+#define TYPE_REDIRECT       'D'  // D = Déviation
 #define TYPE_SELECTION_CARTE 'S' // S = Selection
 
 // --- STRUCTURE CARTE (TOP TRUMPS) ---
