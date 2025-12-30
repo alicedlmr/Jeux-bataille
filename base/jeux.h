@@ -13,7 +13,6 @@
 #define TEXT_SIZE 512
 
 // --- CODES PROTOCOLE ---
-#define TYPE_VOTE       'V'
 #define TYPE_ATTENTE    'A'
 #define TYPE_TON_TOUR   'T'
 #define TYPE_ADVERSAIRE 'W'
